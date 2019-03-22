@@ -1,10 +1,7 @@
 <p>Wypełnij formularz:</p>
 <?php
-    print_r($_GET);
-    print "<br>";
-
     if (isset($_POST['login'])) {
-      print_r($_POST);
+      global $user;
       foreach ($_POST as $k => $v) {
         ${$k} = clrtxt($v);
       }
@@ -12,12 +9,25 @@
       print $haslo."<br>";
       print $email."<br>";
 
-      $qstr='SELECT id FROM users WHERE login=\''.$login.'\' LIMIT 1';
-      if (db_query($qstr)) {
+      $ok = true;
+      if ($user->is_login($login)) {
         echo '<p class="alert-warning">Podany login istnieje!</p>';
-        return;
+        $ok = false;
       }
-    }
+      if ($user->is_email($email)) {
+        echo '<p class="alert-warning">Podany email istnieje!</p>';
+        $ok = false;
+      }
+      if ($ok) {
+        $user->login = $login;
+        $user->haslo = $haslo;
+        $user->email = $email;
+        if ($user->savtb()) {
+          echo '<p class="text-info">Utworzono konto!</p>';
+          $user->login($login, $haslo, true);
+        }
+      }
+    } else {
 ?>
 <form action="?id=<?php echo $id; ?>" method="POST">
   <div class="form-group">
@@ -35,3 +45,6 @@
 
   <input type="submit" name="zapisz" value="Zapisz" class="btn btn-primary">
 </form>
+<?php
+  }
+?>

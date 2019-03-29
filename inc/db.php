@@ -55,6 +55,10 @@ $qstr="BEGIN;
         email CHAR(50) UNIQUE NOT NULL,
         datad INT NOT NULL
     );
+    
+    CREATE TABLE users (
+        
+    );
     INSERT INTO users VALUES (NULL,'admin','".sha1('haslo')."', 'admin@home.net',".time().");
 COMMIT;
 ";

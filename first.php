@@ -1,18 +1,30 @@
 <!DOCTYPE html>
 <html lang="pl">
-<!-- first.php -->
+<!--
+   first.php
+-->
+
 <head>
     <meta charset="utf-8" />
-    <title>Test PHP</title>
-<?php
-
-?>
+    <title>bez nazwy</title>
 </head>
-
 <body>
-<?php
-    echo("<h1>Witaj w PHP!</h1>");
-?>
-</body>
 
+<?php
+echo "Witaj!";
+// zmienne globalne
+$x = 5 * 5;
+$txt = "działania";
+
+function myTest() {
+    global $x, $txt;
+    if ($x > 20)
+        echo "<p>Wynik ".$txt.": $x</p>";
+}
+
+myTest();
+
+?>
+
+</body>
 </html>

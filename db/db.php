@@ -1,12 +1,50 @@
 <?php
+$initstr="BEGIN;
+CREATE TABLE users (
+    uid INTEGER PRIMARY KEY NOT NULL,
+    login CHAR(20) UNIQUE NOT NULL,
+    haslo CHAR(50) NOT NULL,
+    email CHAR(40) UNIQUE NOT NULL,
+    datad INT NOT NULL
+);
+INSERT INTO users VALUES (NULL, 'admin', '".sha1('haslo')."', 'admin@home.net', ".time().");
+CREATE TABLE uczniowie (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    imie TEXT,
+    nazwisko TEXT,
+    plec BOOLEAN,
+    id_klasa INTEGER NOT NULL,
+    FOREIGN KEY (id_klasa) REFERENCES klasy (id)
+    ON DELETE CASCADE ON UPDATE NO ACTION
+);
+CREATE TABLE klasy (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    klasa TEXT(2),
+    rok_naboru INTEGER,
+    rok_matury INTEGER
+);
+COMMIT;
+";
+
+
 function init_baza($dbfile) {
-	global $db,$kom;
+	global $db,$kom, $initstr;
 	try {
 		if (!file_exists($dbfile)) $kom[]='Próba utworzenia nowej bazy...';
 		$db=new PDO("sqlite:$dbfile");
 		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	} catch(PDOException $e) {
 		echo ($e->getMessage());
+	}
+}
+
+function init_tables() {
+	global $db,$kom, $initstr;
+	$qstr='SELECT name FROM sqlite_master WHERE type=\'table\' AND name=\'users\'';
+	$ret = array();
+	db_query($qstr, $ret);
+	if (empty($ret)) {
+			$db->exec($initstr);
 	}
 }
 
@@ -46,21 +84,5 @@ function db_query($qstr,&$ret=null) {
 	if (empty($ret)) return false;
 	return true;
 	}
-
-$qstr="BEGIN;
-    CREATE TABLE users (
-        id INTEGER PRIMARY KEY NOT NULL,
-        login CHAR(20) UNIQUE NOT NULL,
-        haslo CHAR(50) NOT NULL,
-        email CHAR(50) UNIQUE NOT NULL,
-        datad INT NOT NULL
-    );
-    
-    CREATE TABLE users (
-        
-    );
-    INSERT INTO users VALUES (NULL,'admin','".sha1('haslo')."', 'admin@home.net',".time().");
-COMMIT;
-";
 
 ?>

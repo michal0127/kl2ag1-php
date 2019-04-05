@@ -1,9 +1,10 @@
 <?php
-
+$kom = [];  // tablica komunikatów
 $pages = array(
-    'witam' => 'Witamy',
-    'baza' => 'Baza',
-    'formularz' => 'Formularz'
+    'witam'=>'Aplikacja w PHP',
+    'create'=>'SQL Create',
+    'select'=>'SQL Select',
+    'formularz'=>'Formularz'
 );
 
 function get_page_title($id) {
@@ -14,38 +15,39 @@ function get_page_title($id) {
         echo 'Aplikacja w PHP';
 }
 
-function get_menu($id) {
-    global $pages, $user;
-    foreach ($pages as $p => $t) {
-        echo '
-            <li class="nav-item">
-                <a class="nav-link js-scroll-trigger" href="?id='.$p.'">'.$t.'</a>
-            </li>';
-    }
-    if ($user->id) {
-        echo '
-            <li class="nav-item">
-                <a class="nav-link js-scroll-trigger" href="?id=wyloguj">Wyloguj</a>
-            </li>';
-    } else {
-        echo '
-            <li class="nav-item">
-                <a class="nav-link js-scroll-trigger" href="?id=login">Zaloguj się</a>
-            </li>';
-    }
+function get_kom() {
+    global $kom;
+    foreach ($kom as $k)
+        echo '<p class="lead">'.$k.'</p>';
 }
 
 function get_page_content($id) {
+    global $pages, $kom;
     if (file_exists($id.'.html'))
         include($id.'.html');
     else
-        echo '<p>Brak takiej strony!</p>';
+        $kom[]='Brak strony: '.$id;
 }
 
-function get_koms() {
-    global $kom;
-    // foreach ($tb as $k) echo '<p>'.$k.'</p>';
-    foreach ($kom as $k) echo '<p class="lead">'.$k.'</p>';
+function get_menu($id) {
+    global $pages, $user;
+    foreach ($pages as $klucz => $wartosc) {
+        echo '
+        <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="?id='.$klucz.'">'.$wartosc.'</a>
+        </li>';
+    }
+    if ($user->uid) {
+        echo '
+        <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="?id=wyloguj">Wyloguj</a>
+        </li>';
+    } else {
+        echo '
+        <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="?id=login">Zaloguj się</a>
+        </li>';
+    }
 }
 
 function clrtxt(&$el, $maxdl=30) {
@@ -54,8 +56,8 @@ function clrtxt(&$el, $maxdl=30) {
     } else {
         $el = trim($el);
         $el = substr($el, 0, $maxdl);
-        if (get_magic_quotes_gpc()) $el = stripslashes($el);
-        $el = htmlspecialchars($el, ENT_QUOTES);
+        if (get_magic_quotes_gpc()) $el=stripslashes($el);
+        $el=htmlspecialchars($el, ENT_QUOTES);
         return $el;
     }
 }
@@ -65,5 +67,4 @@ function rescape($str) {
     foreach ($str as $k => $w) $str[$k] = get_magic_quotes_gpc() ? stripslashes($w) : $w;
     if (!$isa) return $str[0]; else return $str;
 }
-
 ?>
